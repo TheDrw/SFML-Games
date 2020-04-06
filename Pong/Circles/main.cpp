@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <random>
 
 void ExitGame(sf::RenderWindow &window);
 
@@ -18,17 +19,17 @@ void DrawGame(sf::RenderWindow &window, const sf::CircleShape &ball, const sf::R
 
 void bounceBall(sf::Vector2f &ballDirection, const sf::Vector2f &ballDeltaVector);
 
-void TriggerCheck(const sf::CircleShape &ball, const sf::RectangleShape& box, sf::Vector2f &dir,  sf::Sound* &hitSound);
+void TriggerCheck(const sf::CircleShape &ball, const sf::RectangleShape& box, sf::Vector2f &dir, sf::Sound* &hitSound, const float ballSpeed);
 
 bool IsBallCollidingWithBox(const sf::CircleShape &ball, const sf::RectangleShape &box);
 
 void StartPositionBall(sf::CircleShape &ball);
 
-const unsigned int SCREEN_SIZE_X = 800, SCREEN_SIZE_Y = 600;
+const unsigned int SCREEN_SIZE_X = 1280, SCREEN_SIZE_Y = 720;
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "Ping ping pong pong!");
+	sf::RenderWindow window(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "Ping Ping Pong!");
 	window.setFramerateLimit(60);
 
 
@@ -102,16 +103,15 @@ int main()
 	playerTwoScoreText.setPosition((SCREEN_SIZE_X / 2) + (SCREEN_SIZE_X / 4) - (playerOneScoreText.getCharacterSize() / 2), SCREEN_SIZE_Y / 50);
 
 	const float TIME_DELTA = 1/60.f;
-	const float BALL_SPEED = 150.f;
-	const float PADDLE_SPEED = 200.f;
+	const float BALL_SPEED = 500.f;
+	const float PADDLE_SPEED = 300.f;
 
 	size_t playerOneScore = 0, playerTwoScore = 0;
 
 	//sf::Vector2<float> ballDirection(-TIME_DELTA * BALL_SPEED, 0.f);
-	sf::Vector2<float> ballDirection(-TIME_DELTA * BALL_SPEED, -TIME_DELTA * BALL_SPEED);
-	sf::Vector2<float> ballVelocity(0.f, 0.f);
+	sf::Vector2f ballDirection(-TIME_DELTA * BALL_SPEED, -TIME_DELTA * BALL_SPEED);
+	sf::Vector2f ballVelocity(0.f, 0.f);
 
-	std::cout << bottomBorder.getRotation() << '\n';
 	//auto paddle = std::unique_ptr<drw::Box>(new drw::Box(
 	//	25.f, 
 	//	100.f, 
@@ -121,14 +121,30 @@ int main()
 	//));
 
 	sf::SoundBuffer pingBuffer;
-	if (!pingBuffer.loadFromFile("sounds/ping.wav"))
+	if (!pingBuffer.loadFromFile("sounds/hit.wav"))
 	{
 		return EXIT_FAILURE;
 	}
 
-	sf::Sound* pingSound = new sf::Sound(pingBuffer), *pongSound = new sf::Sound(pingBuffer);
+	sf::SoundBuffer goalBuffer;
+	if (!goalBuffer.loadFromFile("sounds/goal.wav"))
+	{
+		return EXIT_FAILURE;
+	}
+
+	sf::Sound* pingSound = new sf::Sound(pingBuffer), 
+		*pongSound = new sf::Sound(pingBuffer), 
+		*borderSound = new sf::Sound(pingBuffer),
+		*goalSound = new sf::Sound(goalBuffer);
 	//auto pingSound = std::make_unique<sf::Sound>(new sf::Sound(pingBuffer));
+	borderSound->setPitch(1.1f);
 	pongSound->setPitch(0.9);
+
+	std::random_device randomDevice;
+	std::mt19937 mt(randomDevice());
+	auto randomBool = std::uniform_int_distribution<int>(0, 1);
+
+	float incrementedSpeedPerHit = 0.f;
 
 	// game loop
 	while (window.isOpen())
@@ -141,35 +157,47 @@ int main()
 		// player2 - up/down
 		MovePaddle(rightPaddle, sf::Keyboard::Up, sf::Keyboard::Down, TIME_DELTA * PADDLE_SPEED);
 
-		TriggerCheck(ball, leftPaddle, ballDirection, pingSound);
-		TriggerCheck(ball, rightPaddle, ballDirection, pongSound);
+		TriggerCheck(ball, leftPaddle, ballDirection, pingSound, BALL_SPEED);
+		TriggerCheck(ball, rightPaddle, ballDirection, pongSound, BALL_SPEED);
 
 		// static top border
 		if (IsBallCollidingWithBox(ball, topBorder))
 		{
+			borderSound->play();
 			bounceBall(ballDirection, ballVelocity);
 		}
 
 		// static bottom border
 		if (IsBallCollidingWithBox(ball, bottomBorder))
 		{
+			borderSound->play();
 			bounceBall(ballDirection, ballVelocity);
 		}
 		
+		// player two wins
 		if (IsBallCollidingWithBox(ball, playerOneGoalpost))
 		{
 			playerTwoScore++;
 			playerTwoScoreText.setString(std::to_string(playerTwoScore));
 			StartPositionBall(ball);
+			goalSound->play();
 
-
+			ballDirection = randomBool(mt) ?
+				sf::Vector2f(-TIME_DELTA * BALL_SPEED, -TIME_DELTA * BALL_SPEED) :
+				sf::Vector2f(-TIME_DELTA * BALL_SPEED, TIME_DELTA * BALL_SPEED);
 		}
 
+		// player one wins
 		if (IsBallCollidingWithBox(ball, playerTwoGoalpost))
 		{
 			playerOneScore++;
 			playerOneScoreText.setString(std::to_string(playerOneScore));
 			StartPositionBall(ball);
+			goalSound->play();
+
+			ballDirection = randomBool(mt) ?  
+				sf::Vector2f(TIME_DELTA * BALL_SPEED, -TIME_DELTA * BALL_SPEED):
+				sf::Vector2f(TIME_DELTA * BALL_SPEED, TIME_DELTA * BALL_SPEED);
 		}
 
 		auto prev = ball.getPosition();
@@ -197,6 +225,11 @@ int main()
 		window.display();
 	}
 
+	delete pongSound;
+	delete pingSound;
+	delete borderSound;
+	delete goalSound;
+
 	return 0;
 }
 
@@ -217,7 +250,7 @@ bool IsBallCollidingWithBox(const sf::CircleShape &ball, const sf::RectangleShap
 			ball.getPosition().y + 2.f * ball.getRadius() > box.getPosition().y); // bottom side
 }
 
-void TriggerCheck(const sf::CircleShape &ball, const sf::RectangleShape& box, sf::Vector2f &dir, sf::Sound* &hitSound)
+void TriggerCheck(const sf::CircleShape &ball, const sf::RectangleShape& box, sf::Vector2f &dir, sf::Sound* &hitSound, const float ballSpeed)
 {
 	if (IsBallCollidingWithBox(ball, box))
 	{
@@ -232,13 +265,13 @@ void TriggerCheck(const sf::CircleShape &ball, const sf::RectangleShape& box, sf
 		sf::Vector2f ballCenter(ball.getPosition().x + ball.getRadius(), ball.getPosition().y + ball.getRadius());
 
 		sf::Vector2f bounceVector = boxCenter - ballCenter;
-		bounceVector = bounceVector / (sqrt(bounceVector.x * bounceVector.x + bounceVector.y * bounceVector.y)); // n ormilzie
+		bounceVector = bounceVector / (sqrt(bounceVector.x * bounceVector.x + bounceVector.y * bounceVector.y)); // normilzie
 
-		dir = -1.f*bounceVector * 300.f * (1/60.f);
+		dir = -1.f*bounceVector * ballSpeed * (1/60.f);
 	}
 }
 
-// bounce for static box
+// bounce for borders box
 void bounceBall(sf::Vector2f &ballDirection, const sf::Vector2f &ballVelocity)
 {
 	if (ballVelocity.x < 0 && ballVelocity.y > 0) // going left and up

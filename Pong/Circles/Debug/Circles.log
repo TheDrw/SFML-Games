@@ -1,19 +1,19 @@
 ﻿  main.cpp
-c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(77): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(99): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(102): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(131): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(229): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(78): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(100): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(103): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(141): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(262): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(230): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(263): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
           with
           [
               T=float
           ]
-c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(231): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(264): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
           with
           [
               T=float
