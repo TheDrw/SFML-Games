@@ -27,9 +27,16 @@ void StartPositionBall(sf::CircleShape &ball);
 
 const unsigned int SCREEN_SIZE_X = 1280, SCREEN_SIZE_Y = 720;
 
+// for screen size
+struct size
+{
+	const size_t x = 1280;
+	const size_t y = 720;
+}screen_size;
+
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "Ping Ping Pong!");
+	sf::RenderWindow window(sf::VideoMode(screen_size.x, screen_size.y), "Ping Ping Pong!");
 	window.setFramerateLimit(60);
 
 
@@ -44,7 +51,6 @@ int main()
 		(SCREEN_SIZE_Y / 2) - (leftPaddle.getSize().y / 2)
 	);
 	
-	std::cout << leftPaddle.getPosition().x << ' ' << leftPaddle.getPosition().y;
 
 	sf::RectangleShape rightPaddle(sf::Vector2<float>(20.f, 75.f));
 	rightPaddle.setFillColor(sf::Color::Red);
