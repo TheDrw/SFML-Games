@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <random>
+#include "Game.h"
 
 void ExitGame(sf::RenderWindow &window);
 
@@ -36,6 +37,11 @@ struct size
 
 int main()
 {
+	std::unique_ptr<drw::Game> game = std::make_unique<drw::Game>();
+	game->play();
+
+	return 0;
+
 	sf::RenderWindow window(sf::VideoMode(screen_size.x, screen_size.y), "Ping Ping Pong!");
 	window.setFramerateLimit(60);
 
@@ -95,13 +101,13 @@ int main()
 	//music.setLoop(true);
 	//music.play();
 
-	sf::Font font;
-	if (!font.loadFromFile("text/ArcadeAlternate.ttf"))
+	sf::Font ingameFont;
+	if (!ingameFont.loadFromFile("text/ArcadeAlternate.ttf"))
 	{
 		return EXIT_FAILURE;
 	}
 
-	sf::Text playerOneScoreText("0", font), playerTwoScoreText("0", font);
+	sf::Text playerOneScoreText("0", ingameFont), playerTwoScoreText("0", ingameFont);
 	playerOneScoreText.setCharacterSize(100);
 	playerOneScoreText.setPosition((SCREEN_SIZE_X / 2) - (SCREEN_SIZE_X / 4) - (playerOneScoreText.getCharacterSize() / 2), SCREEN_SIZE_Y / 50);
 
