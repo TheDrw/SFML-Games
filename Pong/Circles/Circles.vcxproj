@@ -157,12 +157,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="DrwBehaviour.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Box.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="DrwBehaviour.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Box.h" />
   </ItemGroup>

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "DrwBehaviour.h"
 
 namespace drw
 {
@@ -11,37 +12,45 @@ namespace drw
 		window->setFramerateLimit(60);
 
 
-		initializeAssets();
-		initializeGameObjects();
+		InitializeAssets();
+		InitializeGameObjects();
 	}
 
-	void Game::play()
+	void Game::Play()
 	{
-		std::cout << "game on" << '\n';
 		currentGameState = GameState::ACTIVE;
-		setStartPositionForBall();
+		SetStartPositionForBall();
 		while (window->isOpen())
 		{
-			
+			ExitGame();
+
+			Update();
+
+
 			window->clear();
 
-			drawAssets();
-			drawGameObjects();
+			DrawAssets();
+			DrawGameObjects();
 
 			window->display();
 			
 		}
 		currentGameState = GameState::EXIT;
-		std::cout << "game off" << '\n';
 	}
 
-	void Game::initializeScores()
+	void Game::Update()
+	{
+		leftPaddle->Update(TIME_DELTA);
+		rightPaddle->Update(TIME_DELTA);
+	}
+
+	void Game::InitializeScores()
 	{
 		playerOneScore = 0;
 		playerTwoScore = 0;
 	}
 
-	void Game::initializeAssets()
+	void Game::InitializeAssets()
 	{
 		//// SOUND
 		hitBuffer = std::make_unique<sf::SoundBuffer>();
@@ -83,7 +92,7 @@ namespace drw
 		playerTwoScoreText->setPosition((SCREEN_SIZE_X / 2) + (SCREEN_SIZE_X / 4) - (playerTwoScoreText->getCharacterSize() / 2), SCREEN_SIZE_Y / 50);
 	}
 
-	void Game::initializeGameObjects()
+	void Game::InitializeGameObjects()
 	{
 		const float SCREEN_SIZE_X = static_cast<float>(window->getSize().x), 
 			SCREEN_SIZE_Y = static_cast<float>(window->getSize().y);
@@ -93,19 +102,26 @@ namespace drw
 		ball->setFillColor(sf::Color::Green);
 
 		//// PADDLES
-		leftPaddle = std::make_unique<sf::RectangleShape>(sf::Vector2f(20.f, 75.f));
-		leftPaddle->setFillColor(sf::Color::Blue);
-		leftPaddle->setPosition(
+		leftPaddle = std::make_unique<drw::Box>();
+		leftPaddle->SetPlayerControls(sf::Keyboard::W, sf::Keyboard::S);
+		leftPaddle->SetBoxSize(sf::Vector2f(25.f, 75.f));
+		leftPaddle->SetMoveSpeed(300.f);
+		leftPaddle->SetPosition(
 			40,
-			(SCREEN_SIZE_Y / 2) - (leftPaddle->getSize().y / 2)
+			(SCREEN_SIZE_Y / 2) - (leftPaddle->GetBoxHeight() / 2)
 		);
+		leftPaddle->SetColor(sf::Color::Blue);
 
-		rightPaddle = std::make_unique<sf::RectangleShape>(sf::Vector2<float>(20.f, 75.f));
-		rightPaddle->setFillColor(sf::Color::Red);
-		rightPaddle->setPosition(
-			SCREEN_SIZE_X - 40 - rightPaddle->getSize().x,
-			(SCREEN_SIZE_Y / 2) - (rightPaddle->getSize().y / 2)
+		rightPaddle = std::make_unique<drw::Box>();
+		rightPaddle->SetPlayerControls(sf::Keyboard::Up, sf::Keyboard::Down);
+		rightPaddle->SetBoxSize(sf::Vector2f(25.f, 75.f));
+		rightPaddle->SetMoveSpeed(300.f);
+		rightPaddle->SetPosition(
+			SCREEN_SIZE_X - 40 - rightPaddle->GetBoxWidth(),
+			(SCREEN_SIZE_Y / 2) - (rightPaddle->GetBoxHeight() / 2)
 		);
+		rightPaddle->SetColor(sf::Color::Red);
+
 
 		//// TOP/BOTTOM BORDERS
 		topBorder = std::make_unique<sf::RectangleShape>(sf::Vector2<float>(SCREEN_SIZE_X, 5));
@@ -137,13 +153,13 @@ namespace drw
 		}
 	}
 
-	void Game::drawGameObjects()
+	void Game::DrawGameObjects()
 	{
 		window->draw(*ball);
 
 		//// DRAW PADDLES
-		window->draw(*leftPaddle);
-		window->draw(*rightPaddle);
+		window->draw(leftPaddle->GetDraw());
+		window->draw(rightPaddle->GetDraw());
 
 		//// DRAW TOP/MID BORDERS ( too check to see if they're on screen )
 		window->draw(*topBorder);
@@ -158,16 +174,17 @@ namespace drw
 		{
 			window->draw(*border);
 		}
+
+		
 	}
 
-	void Game::drawAssets()
+	void Game::DrawAssets()
 	{
-		//window->draw(*ingameFont);
 		window->draw(*playerOneScoreText);
 		window->draw(*playerTwoScoreText);
 	}
 
-	void Game::setStartPositionForBall()
+	void Game::SetStartPositionForBall()
 	{
 		ball->setPosition(sf::Vector2f(
 			(window->getSize().x / 2) - ball->getRadius(),
@@ -175,8 +192,17 @@ namespace drw
 		));
 	}
 
-	void Game::exitGame()
+	void Game::ExitGame()
 	{
+		sf::Event event;
+		while (window->pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+			{
+				window->close();
+			}
+		}
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 		{
 			window->close();

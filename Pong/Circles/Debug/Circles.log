@@ -1,2 +1,24 @@
 ﻿  Game.cpp
+  main.cpp
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(90): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(112): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(115): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(153): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(274): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(275): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\drw\source\repos\sfml-games\sfml-games\pong\circles\main.cpp(276): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  Box.cpp
+  Generating Code...
   Circles.vcxproj -> C:\Users\drw\source\repos\SFML-Games\SFML-Games\Pong\Debug\Circles.exe

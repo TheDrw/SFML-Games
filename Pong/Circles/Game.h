@@ -10,6 +10,7 @@
 #include <string>
 #include <random>
 
+#include "DrwBehaviour.h"
 //class sf::RenderWindow;
 //class sf::SoundBuffer;
 //class sf::Sound;
@@ -23,26 +24,31 @@ namespace drw
 		PLAYER_TWO_SCORES, PLAYER_TWO_WINS, RESTART, PAUSE, EXIT
 	};
 
-	class Game
+	class Game// : DrwBehaviour
 	{
 	public:
 		Game();
 		~Game() {}
-		void play();
+		void Play();
+		
 	private:
 		// FUNCS
-		void initializeScores();
-		void initializeAssets();
-		void initializeGameObjects();
-		void drawGameObjects();
-		void drawAssets();
+		void Update();
+		void InitializeScores();
+		void InitializeAssets();
+		void InitializeGameObjects();
+		void DrawGameObjects();
+		void DrawAssets();
+		//bool isCurrentObjectCollidingWithOpposingObject();
 
-		void setStartPositionForBall();
+		void SetStartPositionForBall();
 
-		void exitGame();
+		void ExitGame();
 
 		// VARS
 		size_t playerOneScore, playerTwoScore;
+
+		std::unique_ptr<drw::Box> leftPaddle, rightPaddle;
 
 		std::unique_ptr<sf::RenderWindow> window;
 		std::unique_ptr<sf::SoundBuffer> hitBuffer, goalBuffer;
@@ -51,13 +57,15 @@ namespace drw
 		std::unique_ptr<sf::Text> playerOneScoreText, playerTwoScoreText;
 
 		std::unique_ptr<sf::CircleShape> ball;
-		std::unique_ptr<sf::RectangleShape> leftPaddle, rightPaddle, 
-			topBorder, bottomBorder,
+		std::unique_ptr<sf::RectangleShape> topBorder, bottomBorder,
 			playerOneGoalpost, playerTwoGoalpost;
 
 		std::vector<std::unique_ptr<sf::RectangleShape>> midBordersVector;
 
 		GameState currentGameState;
+
+		// CONST
+		float TIME_DELTA = 1 / 60.f;
 	};
 
 }

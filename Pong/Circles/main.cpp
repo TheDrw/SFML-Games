@@ -38,7 +38,7 @@ struct size
 int main()
 {
 	std::unique_ptr<drw::Game> game = std::make_unique<drw::Game>();
-	game->play();
+	game->Play();
 
 	return 0;
 
